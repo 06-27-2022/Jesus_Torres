@@ -14,14 +14,14 @@ public class Summing {
 		int[] arr1 = {};
 		int[] arr2 = {3,2,3};
 		int[] arr3 = {1};
-		//There doesn't seem to be a way to apply a method
-		//directly to an array so I created an empty instance
-		//to apply my method to in order to apply my method
-		//to my array as an argument in my method.
-		//Feels inelegant and that there should be a better
-		//method. 
-		//Also this comment should have used the alternate
-		//formatting.
+		/*
+		 * Okay so there is a way to make this just work on arrays without an object
+		 * but it requires use of Static. I have no idea what Static means and it
+		 * seems potentially problematic outside of small scale projects.
+		 * 
+		 * So this seems to be the best way until I am able to manage static
+		 * effectively.
+		 */
 		Summing plchldr = new Summing();
 		
 		System.out.println(plchldr.bgsum(arr0));
