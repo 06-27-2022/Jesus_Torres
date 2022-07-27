@@ -1,0 +1,20 @@
+package com.business.model;
+
+public class reimbursementticket {
+
+	private int id;
+	
+	private double ammount;
+	
+	private String description;
+	
+	private String status;
+	
+	public reimbursementticket() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public reimbursementticket(double ammount, String description) {
+		
+	}
+}

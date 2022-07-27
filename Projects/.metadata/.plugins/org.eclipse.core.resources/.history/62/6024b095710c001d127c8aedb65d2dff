@@ -1,0 +1,12 @@
+package com.business.model;
+
+public class reimbursementticket {
+
+	private int id;
+	
+	private double ammount;
+	
+	private String description;
+	
+	private String status;
+}

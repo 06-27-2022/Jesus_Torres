@@ -1,0 +1,35 @@
+package com.business.web;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.business.model.userprofiles;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class NewUserServlet extends HttpServlet {
+	private static final long serialVersionUID = 8172821371993278157L;
+
+	public NewUserServlet() {
+		super();
+	}
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		response.setStatus(200);
+		response.setContentType("text/html");
+		PrintWriter writer = response.getWriter();
+		writer.write("You reached the servlet");
+		
+//		String requestBodyText = new String(request.getInputStream().readAllBytes());
+//		ObjectMapper objctMppr = new ObjectMapper();
+//		userprofiles newUser = objctMppr.readValue(requestBodyText, userprofiles.class);
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		doGet(request,response);
+	}
+}

@@ -1,0 +1,113 @@
+package com.business.web;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.business.model.reimbursementticket;
+import com.business.model.userprofiles;
+import com.business.repository.reimbursementticketRepository;
+import com.business.repository.reimbursementticketRepositoryImpl;
+import com.business.repository.userprofileRepositoryImpl;
+import com.business.repository.userprofilesRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class DispatcherServlet extends HttpServlet{
+
+	/**
+	 * This servlet manages all 
+	 */
+	private static final long serialVersionUID = 4472791272157180834L;
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	
+		String httpVerb = request.getMethod();
+		String resource = request.getRequestURI();
+		
+		String isolatedResource = resource.replace("/ReimbursementTicketPrcssr/api", "");
+		
+		PrintWriter writer = response.getWriter();
+		userprofiles loggedInUser = null;
+		HttpSession RTSauth = request.getSession(false);
+		switch(isolatedResource) {
+		//user management URI
+		case "/usergate":	
+			response.setContentType("text/html");
+			
+			userprofilesRepository userhldr = new userprofileRepositoryImpl();
+			String usernameIN = request.getParameter("username");
+			String passwordIN = request.getParameter("password");
+			userprofiles usernameSearch = userhldr.findbyUserName(usernameIN);
+			//user profile creation
+			if(httpVerb.equals("POST")) {
+				userprofiles newUser = new userprofiles();
+				if(usernameSearch == null) {
+					newUser = new userprofiles(usernameIN,passwordIN);
+					writer.write("New User Created.");
+					userhldr.newprofile(newUser);
+					loggedInUser = userhldr.findbyUserName(usernameIN);
+					RTSauth = request.getSession();
+					response.setStatus(201);
+				}else {
+					writer.write("Username already exists. Please try another Username");
+					response.setStatus(205);
+				}
+			//user profile login	
+			}else if(httpVerb.equals("GET")) {
+				//some error in the input for user login
+				if(usernameSearch == null) {
+					writer.write("You username is not in our database.");
+					response.setStatus(401);
+				}else if(userhldr.checkPassword(usernameIN, passwordIN) == false){
+					writer.write("The password or username gave is incorrect");
+					response.setStatus(401);
+				//successful user login
+				}else {
+					loggedInUser = userhldr.findbyUserName(usernameIN);
+					writer.write("Logged In Succesfully");
+					RTSauth = request.getSession();
+					response.setStatus(202);
+					if(loggedInUser.getManager_status() == true) {
+						Cookie goldCookie = new Cookie("manager","true");
+						response.addCookie(goldCookie);
+					}
+				}
+			}
+			
+			break;
+		//ticket management URI	
+		case "/ticketmngr/view":
+			reimbursementticketRepository tickethldr = new reimbursementticketRepositoryImpl();
+			
+			if(httpVerb.equals("GET") &&  RTSauth != null) {
+				List<reimbursementticket> ticketRepo = tickethldr.findAllPendignRT();
+				
+				ObjectMapper imTheMap = new ObjectMapper();
+				String json = imTheMap.writeValueAsString(ticketRepo);
+				
+				response.setContentType("application/json");
+				response.setStatus(200);
+				writer.write(json);
+			}else {
+				response.setContentType("text/html");
+				writer.write("You are not logged in as a manager.");
+				response.setStatus(204);
+			}
+			break;
+		default:
+			response.setStatus(404);
+			break;
+		
+		}
+	}
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		doPost(request,response);
+	}
+}

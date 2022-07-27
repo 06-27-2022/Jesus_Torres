@@ -1,0 +1,9 @@
+package com.business.repository;
+
+import java.util.List;
+
+public interface reimbursementticketRepository {
+	public List<reimbursementticket> findAllRT();
+	
+	void
+}

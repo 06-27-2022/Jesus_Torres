@@ -1,0 +1,19 @@
+package com.business.controller;
+
+import com.business.repository.userprofileRepositoryImpl;
+import com.business.repository.userprofilesRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class userprofilesController {
+	
+	private userprofilesRepository userHldr;
+	public ObjectMapper objectMapper;
+	
+	public userprofilesController() {
+		userHldr = new userprofileRepositoryImpl();	
+		objectMapper = new ObjectMapper();
+	}
+	
+	public 
+	
+}

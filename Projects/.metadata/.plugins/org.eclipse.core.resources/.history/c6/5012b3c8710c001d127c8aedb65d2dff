@@ -1,0 +1,78 @@
+package com.business.model;
+
+/**
+ * 
+ * @author jtorr
+ * 
+ * This class models a user for the Reimbursement Ticket processor.
+ */
+
+public class userprofiles {
+	/**
+	 * User id for internal database use.
+	 */
+	private int id;
+	/**
+	 * User name for log in
+	 */
+	private String user_name;
+	/**
+	 * User password for log in
+	 */
+	private String password;
+	/**
+	 * User type is either "Employee" or "Manager". 
+	 * 
+	 */
+	private boolean manager_status;
+	
+	public userprofiles() {
+		// TODO Auto-generated constructor stub
+	}
+	//creates a full user profile with all the properties filled in.
+	public userprofiles(int id, String user_name, String password, boolean manager_status) {
+		this.id = id;
+		this.user_name = user_name;
+		this.password = password;
+		this.manager_status = manager_status;
+	}
+	/*
+	 * Creates a user profile compatible with our database format.
+	 * user id is automatically generated db side, but user name and password 
+	 * are typically given client side. Manager status is set to false by 
+	 * default.
+	 */
+	public userprofiles(String user_name, String password) {
+		super();
+		this.user_name = user_name;
+		this.password = password;
+		this.manager_status = false;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getUser_name() {
+		return user_name;
+	}
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public boolean getManager_status() {
+		return manager_status;
+	}
+	public void setManager_status(boolean manager_status) {
+		this.manager_status = manager_status;
+	}
+	
+	
+}

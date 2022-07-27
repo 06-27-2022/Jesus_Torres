@@ -1,0 +1,16 @@
+package com.business.web;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+public class cookiemngr {
+	public static boolean goldCookieChck() {
+		HttpServletRequest request;
+		Cookie[] cookieJar =request.getCookies();
+		return false;
+		
+	}
+}

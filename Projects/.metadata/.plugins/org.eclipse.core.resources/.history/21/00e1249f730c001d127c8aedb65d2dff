@@ -1,0 +1,28 @@
+package com.business.model;
+
+public class reimbursementticket {
+
+	private int id;
+	
+	private double ammount;
+	
+	private String description;
+	
+	private String approvalstatus;
+	
+	public reimbursementticket() {
+		// TODO Auto-generated constructor stub
+	}
+	public reimbursementticket(int id, double ammount, String description, String approvalstatus) {
+		this.id = id;
+		this.ammount = ammount;
+		this.description = description;
+		this.approvalstatus=approvalstatus;
+	}
+	
+	public reimbursementticket(double ammount, String description) {
+		this.ammount = ammount;
+		this.description = description;
+		this.approvalstatus = "PENDING";
+	}
+}

@@ -1,0 +1,66 @@
+package com.business.web;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.business.model.userprofiles;
+import com.business.repository.userprofileRepositoryImpl;
+import com.business.repository.userprofilesRepository;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+import com.business.util.connectionUtil;
+
+public class NewUserServlet extends HttpServlet {
+	private static final long serialVersionUID = 8172821371993278157L;
+
+	public NewUserServlet() {
+		super();
+	}
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		response.setStatus(200);
+		response.setContentType("text/html");
+//		PrintWriter writer = response.getWriter();
+		
+		String usernameIN = request.getParameter("username");
+		String passwordIN = request.getParameter("password");
+		
+		userprofiles newUser = new userprofiles(usernameIN, passwordIN);
+		userprofilesRepository plchldr = new userprofileRepositoryImpl();
+		Connection conn = null;
+		
+		PreparedStatement stmt = null;
+		
+		final String SQL = "insert into userprofiles values(default, ?, ? , false)";
+		
+		try {
+			conn =connectionUtil.getNewConnection();
+			stmt = conn.prepareStatement(SQL);
+			
+			stmt.setString(1,newUser.getUser_name());
+			stmt.setString(2, newUser.getPassword());
+			stmt.execute();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				conn.close();
+				stmt.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		doGet(request,response);
+	}
+}

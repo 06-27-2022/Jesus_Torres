@@ -1,0 +1,11 @@
+package com.business.util;
+
+import javax.servlet.http.Cookie;
+
+public class cookiemngr {
+	public static boolean goldCookieChck() {
+		Cookie[] cookieJar =request.getCookies();
+		return false;
+		
+	}
+}

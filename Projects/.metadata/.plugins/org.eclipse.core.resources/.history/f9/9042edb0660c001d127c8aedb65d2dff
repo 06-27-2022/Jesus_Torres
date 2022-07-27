@@ -1,0 +1,57 @@
+package com.business.util;
+
+import java.util.List;
+import java.util.Scanner;
+
+import com.business.model.userprofiles;
+import com.business.repository.userprofileRepositoryImpl;
+import com.business.repository.userprofilesRepository;
+/**
+ * Is a space to test individual methods and classes before applying
+ * them in servlets.
+ * @author jtorr
+ *
+ */
+public class testSpace {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		
+		userprofilesRepository plchldr = new userprofileRepositoryImpl();
+//		userprofiles newUser = new userprofiles("alright","password");
+	
+		//finding user by username
+//		userprofiles usernameSearch = plchldr.findbyUserName("terrible");
+//		if(usernameSearch == null){
+//			System.out.println("there's nothing here");
+//		}
+		//Test for creating a new username from user inputs.
+		System.out.println("Input New Username:");
+		String usernameIN = scan.nextLine();
+		userprofiles newUser = new userprofiles();
+		boolean invalidUserprofile = true;
+		while(invalidUserprofile) {
+			userprofiles usernameSearch = plchldr.findbyUserName(usernameIN);
+			if(usernameSearch == null) {
+				System.out.println("Input New Password:");
+				String passwordIN = scan.nextLine();
+				newUser = new userprofiles(usernameIN,passwordIN);
+				invalidUserprofile = false;
+			}else {
+				System.out.println("Username already exists. Please try another Username:");
+				usernameIN = scan.nextLine();
+			}
+		
+		}
+				//creates a new user entry in database using the user profile created above.
+		plchldr.newprofile(newUser);
+		scan.close();
+
+		List<userprofiles> stuff = plchldr.findAllUserprofiles();
+		//print user data in database
+		for(userprofiles individual : stuff) {
+			System.out.println(individual.getUser_name() + " | " + individual.getPassword() +" | " + individual.getManager_status());
+		}
+		
+	}
+}
