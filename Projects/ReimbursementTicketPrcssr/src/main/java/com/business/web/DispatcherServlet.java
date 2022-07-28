@@ -71,7 +71,7 @@ public class DispatcherServlet extends HttpServlet{
 				//failed user creation because of already used username.
 				}else {
 					writer.write("Username already exists. Please try another Username");
-					response.setStatus(205);
+					response.setStatus(202);
 				}
 			//user profile login	
 			}else if(httpVerb.equals("GET")) {

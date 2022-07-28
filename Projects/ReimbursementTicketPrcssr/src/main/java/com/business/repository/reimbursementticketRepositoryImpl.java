@@ -160,6 +160,7 @@ public class reimbursementticketRepositoryImpl implements reimbursementticketRep
 			stmt = conn.prepareStatement(SQL);
 			stmt.setString(1,approvalstatus);
 			stmt.setInt(2, id);
+			stmt.execute();
 		}catch(SQLException e){
 			e.printStackTrace();
 		}finally {
