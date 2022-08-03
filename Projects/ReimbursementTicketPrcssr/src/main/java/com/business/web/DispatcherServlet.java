@@ -27,13 +27,12 @@ public class DispatcherServlet extends HttpServlet{
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		//creating all the things will be used throughout the switch.
-		String httpVerb = request.getMethod();
 		String resource = request.getRequestURI();
 		
 		userprofilesRepository userhldr = new userprofileRepositoryImpl();
 		String isolatedResource = resource.replace("/ReimbursementTicketPrcssr/api", "");
 		PrintWriter writer = response.getWriter();
-		userprofiles loggedInUser = null;
+//		userprofiles loggedInUser = null;
 		
 		Cookie[] cookieJar = request.getCookies();
 		boolean goldenckStatus = false;
@@ -57,60 +56,27 @@ public class DispatcherServlet extends HttpServlet{
 			String passwordIN = request.getParameter("password");
 			userprofiles usernameSearch = userhldr.findbyUserName(usernameIN);
 			//user profile creation
-			if(httpVerb.equals("POST")) {
-				userprofiles newUser = new userprofiles();
-				//successful user creation
-				if(usernameSearch == null) {
-					newUser = new userprofiles(usernameIN,passwordIN);
-					writer.write("New User Created.");
-					userhldr.newprofile(newUser);
-					loggedInUser = userhldr.findbyUserName(usernameIN);
-					Cookie basicCookie = new Cookie("authenticated","true");
-					response.addCookie(basicCookie);
-					response.setStatus(201);
+			userprofiles newUser = new userprofiles();
+			//successful user creation
+			if(usernameSearch == null) {
+				newUser = new userprofiles(usernameIN,passwordIN);
+				writer.write("New User Created.");
+				userhldr.newprofile(newUser);
+//				loggedInUser = userhldr.findbyUserName(usernameIN);
+				Cookie basicCookie = new Cookie("authenticated","true");
+				response.addCookie(basicCookie);
+				response.setStatus(201);
 				//failed user creation because of already used username.
-				}else {
-					writer.write("Username already exists. Please try another Username");
-					response.setStatus(202);
-				}
-			//user profile login	
-			}else if(httpVerb.equals("GET")) {
-				//some error in the input for user login
-				if(usernameSearch == null) {
-					writer.write("You username is not in our database.");
-					response.setStatus(401);
-				}else if(userhldr.checkPassword(usernameIN, passwordIN) == false){
-					writer.write("The password or username gave is incorrect");
-					response.setStatus(401);
-				//successful user login
-				}else {
-					loggedInUser = userhldr.findbyUserName(usernameIN);
-					writer.write("Logged In Succesfully");
-					Cookie basicCookie = new Cookie("authenticated","true");
-					response.addCookie(basicCookie);
-					if(loggedInUser.getManager_status() == true) {
-						Cookie goldenCookie = new Cookie("vip", "true");
-						response.addCookie(goldenCookie);
-					}
-					response.setStatus(202);
-				}
+			}else {
+				writer.write("Username already exists. Please try another Username");
+				response.setStatus(202);
 			}
 			
 			break;
 		//ticket management view and editor URI	
 		case "/ticketmngr/view":
 			reimbursementticketRepository tickethldr = new reimbursementticketRepositoryImpl();
-			if(httpVerb.equals("GET") &&  goldenckStatus) {
-				List<reimbursementticket> ticketRepo = tickethldr.findAllPendignRT();
-				
-				ObjectMapper imTheMap = new ObjectMapper();
-				String json = imTheMap.writeValueAsString(ticketRepo);
-				
-				response.setContentType("application/json");
-				response.setStatus(200);
-				writer.write(json);
-			//ticket editor only accesible by managers.
-			}else if(httpVerb.equals("POST") && goldenckStatus){
+			if(goldenckStatus){
 				reimbursementticket ticketSearch = null;
 				int idIN = Integer.parseInt(request.getParameter("ticket_id"));
 				String approvalstatusIN = request.getParameter("approvalstatus");
@@ -141,7 +107,7 @@ public class DispatcherServlet extends HttpServlet{
 			break;
 		case "/ticketmngr/add":
 			reimbursementticketRepository tickethldr2 = new reimbursementticketRepositoryImpl();
-			if(httpVerb.equals("POST") && basicckStatus){
+			if(basicckStatus){
 				double ammountIN = Double.parseDouble(request.getParameter("ammount"));
 				String descriptionIN = request.getParameter("description");
 				reimbursementticket newticket = new reimbursementticket(ammountIN, descriptionIN);
@@ -154,6 +120,7 @@ public class DispatcherServlet extends HttpServlet{
 				writer.write("You are not logged in.");
 				response.setStatus(401);
 			}
+			break;
 		default:
 			response.setStatus(404);
 			break;
@@ -161,6 +128,80 @@ public class DispatcherServlet extends HttpServlet{
 		}
 	}
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		doPost(request,response);
-	}
+		//creating all the things will be used throughout the switch.
+		String resource = request.getRequestURI();
+		
+		userprofilesRepository userhldr = new userprofileRepositoryImpl();
+		String isolatedResource = resource.replace("/ReimbursementTicketPrcssr/api", "");
+		PrintWriter writer = response.getWriter();
+		userprofiles loggedInUser = null;
+		
+		Cookie[] cookieJar = request.getCookies();
+		boolean goldenckStatus = false;
+		if(cookieJar != null) {
+			for(Cookie cookie : cookieJar) {
+				if(cookie.getName().equals("vip")) {
+				goldenckStatus = true;
+				}
+			}
+		}
+		
+		switch(isolatedResource) {
+		//user management URI
+		case "/usergate":	
+			response.setContentType("text/html");
+			String usernameIN = request.getParameter("username");
+			String passwordIN = request.getParameter("password");
+			userprofiles usernameSearch = userhldr.findbyUserName(usernameIN);
+			
+			//some error in the input for user login
+			if(usernameSearch == null) {
+				writer.write("You username is not in our database.");
+				response.setStatus(401);
+			}else if(userhldr.checkPassword(usernameIN, passwordIN) == false){
+				writer.write("The password or username gave is incorrect");
+				response.setStatus(401);
+				//successful user login
+			}else {
+				loggedInUser = userhldr.findbyUserName(usernameIN);
+				writer.write("Logged In Succesfully");
+				Cookie basicCookie = new Cookie("authenticated","true");
+				response.addCookie(basicCookie);
+				if(loggedInUser.getManager_status() == true) {
+					Cookie goldenCookie = new Cookie("vip", "true");
+					response.addCookie(goldenCookie);
+				}
+				response.setStatus(202);
+			}
+			
+			break;
+		//ticket management view and editor URI	
+		case "/ticketmngr/view":
+			reimbursementticketRepository tickethldr = new reimbursementticketRepositoryImpl();
+			if(goldenckStatus) {
+				List<reimbursementticket> ticketRepo = tickethldr.findAllPendignRT();
+				
+				ObjectMapper imTheMap = new ObjectMapper();
+				String json = imTheMap.writeValueAsString(ticketRepo);
+				
+				response.setContentType("application/json");
+				response.setStatus(200);
+				writer.write(json);
+			}else {
+				response.setContentType("text/html");
+				writer.write("You are not logged in.");
+				response.setStatus(401);
+			}
+			break;
+		case "/ticketmngr/add":
+			response.setContentType("text/html");
+			writer.write("You are not logged in.");
+			response.setStatus(401);
+			break;
+		default:
+			response.setStatus(404);
+			break;
+		
+		}
+	}	
 }
