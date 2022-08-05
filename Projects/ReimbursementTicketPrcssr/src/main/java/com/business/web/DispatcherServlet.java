@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet{
 		userprofilesRepository userhldr = new userprofileRepositoryImpl();
 		String isolatedResource = resource.replace("/ReimbursementTicketPrcssr/api", "");
 		PrintWriter writer = response.getWriter();
-		
+		userprofiles loggedInUser = null;
 		Cookie[] cookieJar = request.getCookies();
 		boolean goldenckStatus = false;
 		boolean basicckStatus = false;
@@ -62,6 +62,7 @@ public class DispatcherServlet extends HttpServlet{
 				writer.write("New User Created.");
 				userhldr.newprofile(newUser);
 				Cookie basicCookie = new Cookie("authenticated","true");
+				loggedInUser = userhldr.findbyUserName(usernameIN);
 				response.addCookie(basicCookie);
 				response.setStatus(201);
 				//failed user creation because of already used username.
