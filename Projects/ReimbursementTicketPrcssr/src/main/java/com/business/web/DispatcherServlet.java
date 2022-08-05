@@ -32,7 +32,6 @@ public class DispatcherServlet extends HttpServlet{
 		userprofilesRepository userhldr = new userprofileRepositoryImpl();
 		String isolatedResource = resource.replace("/ReimbursementTicketPrcssr/api", "");
 		PrintWriter writer = response.getWriter();
-//		userprofiles loggedInUser = null;
 		
 		Cookie[] cookieJar = request.getCookies();
 		boolean goldenckStatus = false;
@@ -62,7 +61,6 @@ public class DispatcherServlet extends HttpServlet{
 				newUser = new userprofiles(usernameIN,passwordIN);
 				writer.write("New User Created.");
 				userhldr.newprofile(newUser);
-//				loggedInUser = userhldr.findbyUserName(usernameIN);
 				Cookie basicCookie = new Cookie("authenticated","true");
 				response.addCookie(basicCookie);
 				response.setStatus(201);
